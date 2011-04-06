@@ -1,0 +1,64 @@
+//====================================================================================
+//
+// 	Ri18 model that includes Ih (Kole 2006) and reproduces dendritic spikes in
+//	response to somatic AP burst. This version includes Schaefer et al mod files
+//	and Maarten's Ih mod file and init_vm. The firing threshold was set to -63 mV
+//	(Gulledge 2003). Changes to Ca channels were adopted from Schaefer et al (2003).
+//	No change to it channel parameters. No slow Ca channels (HVA) were included.
+//
+//	Simulation plots distal NMDA conductance as in figure 8 in Letzkus (2006) 
+//	J Neurosci 26(41):10420–10429.
+//
+//	B. Kampa, Zurich 02-04-2006
+//
+//=====================================================================================
+
+// program to get geometry and initialise properties of Ri18//
+
+xopen("Ri18geo.hoc")
+xopen("Ri18organise.hoc")
+xopen("Ri18init_active.hoc")
+
+init_params()
+init_spine()
+init_vm() 
+hexp() 
+init_active_params() 
+init_active() 
+boost_ca()
+InitDistal()
+EPSPstim_time		= 1060
+access dend1[21]    	/* soma*/
+steps_per_ms 		= 10
+dt 				= 0.1
+
+
+// ==========================================
+// insert synapse
+// ==========================================
+
+objref syn,dendSec
+dend1[425] dendSec 	= new SectionRef() // at 800 um from soma, dend1[64] is 200 um from soma
+dendSec.sec syn 		= new epsp(0.5)
+syn.onset			= EPSPstim_time
+syn.imax			= 0.2
+syn.tau0			= 0.2
+syn.tau1			= 2
+
+xopen("insert_nmda.hoc")
+PRE.del_rel 		= EPSPstim_time
+syn.onset			= EPSPstim_time
+xopen("menu.ses")
+xopen("panel.hoc")
+nmda.gmax			= 80000  //to match NMDA-AMPA ratio of 0.22 (Watts 2004) as measured in 0.05 mM Mg
+dendSec.sec syn.loc(.5)
+dendSec.sec nmda.loc(.5)
+steps_per_ms 		= 1
+dt 				= 0.1
+access dend1[21]
+distance()
+xopen("init.hoc")
+print "Ri18 successfully built\n"
+
+
+

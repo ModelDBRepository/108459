@@ -1,0 +1,36 @@
+//----------------------------------------------------------------------------
+//  create compartments and insert passive properties
+//----------------------------------------------------------------------------
+
+create PRE
+PRE {
+  diam=10
+  L=10
+  insert pas
+  g_pas=1/5000
+  e_pas=v_init
+}
+//----------------------------------------------------------------------------
+//  insert transmitter release mechanisms
+//----------------------------------------------------------------------------
+
+PRE {	// insert stim
+
+insert rel	// transmitter release
+del_rel = 10
+dur_rel = 1	// increase stim.dur to get a burst of presynaptic spikes
+amp_rel = 1
+}
+
+//----------------------------------------------------------------------------
+//  insert nmda receptor mechansisms
+//----------------------------------------------------------------------------
+
+objectvar nmda
+nmda = new NMDA_Mg()			// create synapse
+dend1[425] nmda.loc(0.5)		// assign distal postsynaptic compartment
+setpointer nmda.C , PRE.T_rel(0.5)	// assign presynaptic compartment
+Erev_NMDA_Mg	= 5			//	(mV)	reversal potential (E_K)
+mg_NMDA_Mg		= 1			//	(mM) put in physiol magnesium
+nmda.gmax 		= 20000		//	(pS)	maximum conductance
+print "NMDA receptor inserted at dendritic location\n"

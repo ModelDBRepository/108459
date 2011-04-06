@@ -1,0 +1,69 @@
+objref st_1,st_2,st_3, syn
+strdef location
+location = "dend1[425]"
+time_diff = 10	//EPSP-AP time interva in ms
+EPSPstim_time = 1060	//in ms
+APstim_time = EPSPstim_time + time_diff
+
+proc insert_syn() {
+	dend1[425] syn = new epsp(0.5)
+	syn.onset = EPSPstim_time
+	PRE.del_rel = EPSPstim_time  //sync with NMDA onset
+	syn.imax = 0.2	//nA (from Williams 2002)
+	syn.tau0 = 0.2	//ms
+	syn.tau1 = 2	//ms
+	print "Synapses inserted at ",location
+}
+proc IatSoma() {
+	// insert IClamp at soma
+	access dend1[21]
+
+	st_1  = new IClamp(.5)
+	st_2  = new IClamp(.5)
+	st_3  = new IClamp(.5)
+
+  	st_1.del = APstim_time
+  	st_1.dur = 2
+  	st_1.amp = 4
+
+  	st_2.del = APstim_time+5
+  	st_2.dur = 2
+  	st_2.amp = 10
+
+  	st_3.del = APstim_time+10
+  	st_3.dur = 2
+  	st_3.amp = 10
+
+	print "IClamp inserted at soma"
+	}
+
+proc no_AP() {
+	st_1.amp = 0
+  	st_2.amp = 0
+  	st_3.amp = 0
+	print "APs turned off"
+	}
+
+proc three_AP() {
+	st_1.amp = 4
+  	st_2.amp = 10
+  	st_3.amp = 10
+	print "APs turned on"
+	}
+
+proc update_stim () {
+	APstim_time = EPSPstim_time + time_diff
+	st_1.del = APstim_time
+	st_2.del = APstim_time + 5
+	st_3.del = APstim_time + 10
+	print "EPSPstim_time = ",EPSPstim_time
+	print "APstim_time = ",APstim_time
+	print "time_diff = ",time_diff
+}
+
+proc update_loc() {
+	location syn.loc(0.5)
+	print "Synapses inserted at ",location
+}
+insert_syn()
+IatSoma()

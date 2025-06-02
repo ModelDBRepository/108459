@@ -38,8 +38,7 @@ Running the model in the default configuration should lead to:
 created by B. Kampa (2006)
 kampa@hifo.uzh.ch
 
+## Changelog
 20110406 mod/cad.mod integration method changed to derivimplicit as suggested by Ted: [http://www.neuron.yale.edu/phpBB/viewtopic.php?f=28&t=592](http://www.neuron.yale.edu/phpBB/viewtopic.php?f=28&t=592)
-
----
 
 2025-05-30: Standardized to Markdown, and separated.
